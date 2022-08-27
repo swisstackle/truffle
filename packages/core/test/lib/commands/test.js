@@ -287,7 +287,7 @@ describe("test command", () => {
     );
   });
 
-  //  Test with cycles and no missing directories, where all directories exist and all directories contain one or more files
+  //  Test with cycles and no missing directories, where all directories exist and all directories contain one or more files. Also, one file is outside the test directory but linked to it with a symlink inside the test directory.
   it("Check with cycles plus if it follows symlinks outside of the test directory.", async () => {
     // This allows to create customized directory structure to test more than one level of sub directories.
     let fileStructrure = {
@@ -441,7 +441,7 @@ describe("test command", () => {
     assert.equal(
       testFiles.length,
       testFilesCount + newTestFiles + 1, // +1 because of the ../fortesting/random.sol file that is outside of the test file structure.
-      "Wrong number of files discovered"
+      "Wrong number of files discovered."
     );
   });
 
