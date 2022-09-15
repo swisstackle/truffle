@@ -29,105 +29,77 @@ describe("test command", () => {
     });
 
     it("1 directory with files in it.", async () => {
-        // This allows to create customized directory structure to test more than one level of sub directories.
-        let fileStructrure = {
-            name: "sub_directory",
-            files: [""],
-            subdirs: [
-                {
-                    name: "sub_sub_directory",
-                    files: ["test1.sol", "test2.js", "test3.sol"]
-                }
-            ]
-        };
+        tempDir = tmp.dirSync({ unsafeCleanup: true });
+        config = new Config(undefined, tempDir.name);
 
-        // Call method used by Test to discover existing test files. Then create subdirectories and test files in these
-        // subdirectories. Then run Test method again and check if number discovered increased.
-        let testFiles = determineTestFilesToRun({ config });
-        const testFilesCount = testFiles.length;
-
-        const newTestFiles = createTestSubDir(
-            config.test_directory,
-            fileStructrure
-        );
+        dirName = path.join(config.test_directory, "sub_directory");
+        fse.ensureDirSync(dirName);
+        createAFile(dirName, "test1.js");
+        createAFile(dirName, "test2.js");
+        createAFile(dirName, "test3.sol");
         console.log(config.test_directory);
         testFiles = determineTestFilesToRun({ config });
         assert.equal(
             testFiles.length,
-            testFilesCount + newTestFiles,
+            3,
             "Wrong number of files discovered."
         );
     });
 
     it("2 directories with files in it.", async () => {
         // This allows to create customized directory structure to test more than one level of sub directories.
-        let fileStructrure = {
-            name: "sub_directory",
-            files: [""],
-            subdirs: [
-                {
-                    name: "sub_sub_directory",
-                    files: ["test1.sol", "test2.js", "test3.sol"]
-                },
-                {
-                    name: "sub_sub_directory2",
-                    files: ["test4.sol", "test5.js", "test6.sol"]
-                }
-            ]
-        };
+        tempDir = tmp.dirSync({ unsafeCleanup: true });
+        config = new Config(undefined, tempDir.name);
 
-        // Call method used by Test to discover existing test files. Then create subdirectories and test files in these
-        // subdirectories. Then run Test method again and check if number discovered increased.
-        let testFiles = determineTestFilesToRun({ config });
-        const testFilesCount = testFiles.length;
+        dirName = path.join(config.test_directory, "sub_directory");
+        fse.ensureDirSync(dirName);
+        createAFile(dirName, "test1.js");
+        createAFile(dirName, "test2.js");
+        createAFile(dirName, "test3.sol");
 
-        const newTestFiles = createTestSubDir(
-            config.test_directory,
-            fileStructrure
-        );
+        dirName = path.join(config.test_directory, "sub_directory2");
+        fse.ensureDirSync(dirName);
+        createAFile(dirName, "test1.js");
+        createAFile(dirName, "test2.js");
+        createAFile(dirName, "test3.sol");
+
         console.log(config.test_directory);
         testFiles = determineTestFilesToRun({ config });
         assert.equal(
             testFiles.length,
-            testFilesCount + newTestFiles,
+            6,
             "Wrong number of files discovered."
         );
     });
 
     it("3 directories with files in it.", async () => {
         // This allows to create customized directory structure to test more than one level of sub directories.
-        let fileStructrure = {
-            name: "sub_directory",
-            files: [""],
-            subdirs: [
-                {
-                    name: "sub_sub_directory",
-                    files: ["test1.sol", "test2.js", "test3.sol"]
-                },
-                {
-                    name: "sub_sub_directory2",
-                    files: ["test4.sol", "test5.js", "test6.sol"]
-                },
-                {
-                    name: "sub_sub_directory3",
-                    files: ["test4.sol", "test5.js", "test6.sol"]
-                }
-            ]
-        };
-        // Call method used by Test to discover existing test files. Then create subdirectories and test files in these
-        // subdirectories. Then run Test method again and check if number discovered increased.
-        let testFiles = determineTestFilesToRun({ config });
-        const testFilesCount = testFiles.length;
+        tempDir = tmp.dirSync({ unsafeCleanup: true });
+        config = new Config(undefined, tempDir.name);
 
-        const newTestFiles = createTestSubDir(
-            config.test_directory,
-            fileStructrure
-        );
+        dirName = path.join(config.test_directory, "sub_directory");
+        fse.ensureDirSync(dirName);
+        createAFile(dirName, "test1.js");
+        createAFile(dirName, "test2.js");
+        createAFile(dirName, "test3.sol");
+
+        dirName = path.join(config.test_directory, "sub_directory2");
+        fse.ensureDirSync(dirName);
+        createAFile(dirName, "test1.js");
+        createAFile(dirName, "test2.js");
+        createAFile(dirName, "test3.sol");
+
+        dirName = path.join(config.test_directory, "sub_directory3");
+        fse.ensureDirSync(dirName);
+        createAFile(dirName, "test1.js");
+        createAFile(dirName, "test2.js");
+        createAFile(dirName, "test3.sol");
+
         console.log(config.test_directory);
         testFiles = determineTestFilesToRun({ config });
         assert.equal(
             testFiles.length,
-            testFilesCount + newTestFiles,
+            9,
             "Wrong number of files discovered."
         );
     });
