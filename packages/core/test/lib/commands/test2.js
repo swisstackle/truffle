@@ -11,6 +11,8 @@ const tmp = require("tmp");
 const fs = require("fs");
 let config;
 let tempDir;
+const TruffleError = require("@truffle/error");
+const command = require("../../../lib/commands/obtain");
 
 function updateFile(filename) {
     const fileToUpdate = path.resolve(
@@ -37,8 +39,7 @@ describe("test command", () => {
         createAFile(dirName, "test1.js");
         createAFile(dirName, "test2.js");
         createAFile(dirName, "test3.sol");
-        console.log(config.test_directory);
-        testFiles = determineTestFilesToRun({ config });
+        testFiles = await determineTestFilesToRun({ undefined, undefined, config });
         assert.equal(
             testFiles.length,
             3,
@@ -62,9 +63,7 @@ describe("test command", () => {
         createAFile(dirName, "test1.js");
         createAFile(dirName, "test2.js");
         createAFile(dirName, "test3.sol");
-
-        console.log(config.test_directory);
-        testFiles = determineTestFilesToRun({ config });
+        testFiles = await determineTestFilesToRun({ undefined, undefined, config });
         assert.equal(
             testFiles.length,
             6,
@@ -95,8 +94,7 @@ describe("test command", () => {
         createAFile(dirName, "test2.js");
         createAFile(dirName, "test3.sol");
 
-        console.log(config.test_directory);
-        testFiles = determineTestFilesToRun({ config });
+        testFiles = await determineTestFilesToRun({ undefined, undefined, config });
         assert.equal(
             testFiles.length,
             9,
@@ -112,8 +110,7 @@ describe("test command", () => {
             "sub_directory"
         );
         fse.ensureDirSync(dirName);
-        console.log(config.test_directory);
-        testFiles = determineTestFilesToRun({ config });
+        testFiles = await determineTestFilesToRun({ undefined, undefined, config });
         assert.equal(
             testFiles.length,
             0,
@@ -201,18 +198,16 @@ describe("test command", () => {
 
         // Call method used by Test to discover existing test files. Then create subdirectories and test files in these
         // subdirectories. Then run Test method again and check if number discovered increased.
-        let testFiles = determineTestFilesToRun({ config });
-        const testFilesCount = testFiles.length;
+
         const newTestFiles = createTestSubDir(
             config.test_directory,
             fileStructrure
         );
-        console.log(config.test_directory);
         createAFile(path.join(config.test_directory, ".."), "random.sol");   // Create a file outside of test directory but linked to it with a symlink inside the test directory.
-        testFiles = determineTestFilesToRun({ config });
+        testFiles = await (determineTestFilesToRun({ "inputFile": undefined, "inputArgs":[config.test_directory], "config": config }));
         assert.equal(
             testFiles.length,
-            testFilesCount + newTestFiles + 1, // +1 because of the ../random.sol file that is outside of the test file structure.
+            newTestFiles + 1, // +1 because of the ../random.sol file that is outside of the test file structure.
             "Wrong number of files discovered."
         );
     });
@@ -221,8 +216,16 @@ describe("test command", () => {
     it("No argument and empty directory.", async () => {
         tempDir = tmp.dirSync({ unsafeCleanup: true });
         config = new Config(undefined, tempDir.name);
-        let testFiles = determineTestFilesToRun({ config });
-        assert.equal(testFiles.length, 0, "Non-existing file was detected.");
+        try {
+            await determineTestFilesToRun({ undefined, undefined, config })
+            assert.fail("The test command should have failed.");
+        } catch (error) {
+            assert(
+                error.message.includes(
+                    "Error: Test directory is empty."
+                )
+            );
+        }
     });
 }).timeout(1000);
 
@@ -249,6 +252,7 @@ function createSymlinks(symlinks) {
         symlinks.destination,
         path.join(symlinks.src, symlinks.name),
         err => {
+            console.log(err);
         }
     );
 }
