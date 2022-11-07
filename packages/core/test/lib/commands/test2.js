@@ -4,15 +4,11 @@ const {
 } = require("../../../lib/commands/test/determineTestFilesToRun");
 const path = require("path");
 const fse = require("fs-extra");
-const WorkflowCompile = require("@truffle/workflow-compile");
-const Test = require("../../../lib/testing/Test");
 const Config = require("@truffle/config");
 const tmp = require("tmp");
 const fs = require("fs");
 let config;
 let tempDir;
-const TruffleError = require("@truffle/error");
-const command = require("../../../lib/commands/obtain");
 
 function updateFile(filename) {
     const fileToUpdate = path.resolve(
