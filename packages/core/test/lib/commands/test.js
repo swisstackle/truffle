@@ -29,8 +29,8 @@ describe("test command", () => {
     config = new Config(undefined, tempDir.name);
   });
 
-  it("Check test with subdirectories", () => {
-    let testFiles = determineTestFilesToRun({ config });
+  it("Check test with subdirectories", async () => {
+    let testFiles = await determineTestFilesToRun({ config });
     let testFilesCount = testFiles.length;
 
     let filename = path.join(
@@ -61,7 +61,7 @@ describe("test command", () => {
     // determineTestFilesTo run function can process it without crashing
     fse.ensureDirSync(dirName);
 
-    let newTestFiles = determineTestFilesToRun({ config });
+    let newTestFiles = await determineTestFilesToRun({ config });
     assert.equal(
       newTestFiles.length,
       testFilesCount + 3,
@@ -271,7 +271,7 @@ describe("test command", () => {
 
     // Call method used by Test to discover existing test files. Then create subdirectories and test files in these
     // subdirectories. Then run Test method again and check if number discovered increased.
-    let testFiles = determineTestFilesToRun({ config });
+    let testFiles = await determineTestFilesToRun({ config });
     const testFilesCount = testFiles.length;
 
     const newTestFiles = createTestSubDir(
@@ -279,7 +279,7 @@ describe("test command", () => {
       fileStructrure
     );
 
-    testFiles = determineTestFilesToRun({ config });
+    testFiles = await determineTestFilesToRun({ config });
     assert.equal(
       testFiles.length,
       testFilesCount + newTestFiles,
