@@ -8,7 +8,6 @@ const WorkflowCompile = require("@truffle/workflow-compile").default;
 const { Test } = require("@truffle/test");
 const Config = require("@truffle/config");
 const tmp = require("tmp");
-const fs = require("fs");
 let config;
 let tempDir;
 
